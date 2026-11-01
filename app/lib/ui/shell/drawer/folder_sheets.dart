@@ -334,6 +334,8 @@ Future<FolderPick?> showMoveToFolderSheet(
   required Map<String, int> counts,
   String? currentFolder,
   bool anyFiled = false,
+  String? title,
+  bool allowCreate = true,
 }) => showAppSheet<FolderPick>(
   context,
   isScrollControlled: true,
@@ -348,7 +350,7 @@ Future<FolderPick?> showMoveToFolderSheet(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SheetTitleBar(context.l10n.shellMoveToFolder),
+              SheetTitleBar(title ?? context.l10n.shellMoveToFolder),
               if (folders.isNotEmpty)
                 SheetGroup(
                   margin: _groupMargin,
@@ -365,24 +367,26 @@ Future<FolderPick?> showMoveToFolderSheet(
                       ),
                   ],
                 ),
-              SheetGroup(
-                margin: _groupMargin,
-                children: [
-                  ListPageRow(
-                    icon: AppIcons.newFolder,
-                    title: context.l10n.shellNewFolder,
-                    chevron: false,
-                    onTap: () => Navigator.of(sheet).pop(const PickNewFolder()),
-                  ),
-                  if (anyFiled)
-                    ListPageRow(
-                      icon: AppIcons.noFolder,
-                      title: context.l10n.shellMoveOutOfFolder,
-                      chevron: false,
-                      onTap: () => Navigator.of(sheet).pop(const PickNoFolder()),
-                    ),
-                ],
-              ),
+              if (allowCreate || anyFiled)
+                SheetGroup(
+                  margin: _groupMargin,
+                  children: [
+                    if (allowCreate)
+                      ListPageRow(
+                        icon: AppIcons.newFolder,
+                        title: context.l10n.shellNewFolder,
+                        chevron: false,
+                        onTap: () => Navigator.of(sheet).pop(const PickNewFolder()),
+                      ),
+                    if (anyFiled)
+                      ListPageRow(
+                        icon: AppIcons.noFolder,
+                        title: context.l10n.shellMoveOutOfFolder,
+                        chevron: false,
+                        onTap: () => Navigator.of(sheet).pop(const PickNoFolder()),
+                      ),
+                  ],
+                ),
               const SizedBox(height: 4),
             ],
           ),
@@ -394,7 +398,7 @@ Future<FolderPick?> showMoveToFolderSheet(
 
 // ── A folder's actions ───────────────────────────────────────────────────────
 
-enum FolderAction { edit, delete }
+enum FolderAction { newChat, edit, delete }
 
 Future<FolderAction?> showFolderActionSheet(BuildContext context, DrawerFolder folder) => showAppSheet<FolderAction>(
   context,
@@ -408,6 +412,12 @@ Future<FolderAction?> showFolderActionSheet(BuildContext context, DrawerFolder f
         SheetGroup(
           margin: _groupMargin,
           children: [
+            ListPageRow(
+              icon: AppIcons.newChat,
+              title: context.l10n.commonNewChat,
+              chevron: false,
+              onTap: () => Navigator.of(sheet).pop(FolderAction.newChat),
+            ),
             ListPageRow(
               icon: AppIcons.edit,
               title: context.l10n.commonEdit,
