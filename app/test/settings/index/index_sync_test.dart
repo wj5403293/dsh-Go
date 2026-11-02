@@ -75,6 +75,8 @@ const _sections = {
   'permission-current',
   'permission-default',
   'ui-mode',
+  'quick-panel',
+  'table-tint',
   'web-app',
 };
 
